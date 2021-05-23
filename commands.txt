@@ -1,0 +1,47 @@
+# docker pull mysql:5.7
+# docker run --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=1234 -d mysql:5.7
+# docker exec -it ms bash
+
+    root@62dc127676dc:/# mysql -u root -p1234
+	
+	mysql> create database edendb;
+    Query OK, 1 row affected (0.01 sec)
+	
+	mysql> use edendb;
+    Database changed
+
+
+    mysql> create table as_company (id int not null,name text, primary key (id));
+    Query OK, 0 rows affected (0.48 sec)
+	
+    mysql> create table as_account (id int not null, name text, company_id int not null, primary key (id));
+    Query OK, 0 rows affected (0.36 sec)
+		
+    mysql> create table as_project (id int not null, name text, account_id int not null, status int not null, primary key (id));
+    Query OK, 0 rows affected (0.43 sec)
+
+    mysql> insert into as_company (id, name) values (1, 'Google');
+    Query OK, 1 row affected (0.03 sec)
+    
+    mysql> insert into as_account (id, name, company_id) values (1, 'Google', 1);    
+    Query OK, 1 row affected (0.26 sec)
+
+    mysql> insert into as_project (id, name, account_id, status) values (1, 'Google', 0, 0);
+	
+    root@ubuntu-server:~# docker exec -it ms bash -c "mysql -u root -p1234 -BN -e 'select * from edendb.as_account;'"
+	
+To Do:
+	1. read table.csv with python
+	2. python3 create_html_table.py table.csv > table.html
+	3. docker build -t web_server .
+
+
+FROM centos:7
+
+RUN	install apache
+COPY table.html /var/www/html/table.html
+RUN systemctl enable apache
+CMD
+
+
+    4. docker run web_server -p 9980:80
